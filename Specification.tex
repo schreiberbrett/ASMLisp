@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage{syntax}
+
+\title{ASMLisp Specification}
+\author{Brett Schreiber}
+\begin{document}
+\maketitle
+
+\section{Syntax}
+ASMLisp's syntax is inspired by LISP.
+\subsection{Grammar}
+\begin{grammar}
+<program> ::= <definition>*
+
+<instruction> ::= <definition> | <label> | <call>
+
+<definition> ::= `(define' <identifier> <argument> `)'
+
+<label> ::= `(label' <identifier> `)'
+
+<call> ::= `(' <identifier> <argument>* `)'
+
+<argument> ::= <identifier> | <lambda> | <immediate>
+
+<lambda> ::= `(lambda' <identifier>* <instruction>* `)'
+
+<identifier> ::= /[a-zA-Z]\textbackslash w*/
+
+<immediate> ::= /[1-9]\textbackslash d*/
+\end{grammar}
+
+\section{Semantic Rules}
+\subsection{Scope}
+
+
+\end{document}
