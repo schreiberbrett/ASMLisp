@@ -28,3 +28,22 @@ ASMLisp takes this principle a step further by allowing code to be passed as dat
     (doTwice (λ
         (increment register)))))
 ```
+
+## Grammar
+```
+    <program> ::= <definition>*
+<instruction> ::= "(" (<definition> | <label> | <call>) ")"
+ <definition> ::= "define" <identifier> <argument>
+      <label> ::= "label" <identifier>
+       <call> ::= <identifier> <argument>*
+   <argument> ::= <identifier> | <lambda> | <immediate>
+     <lambda> ::= "(" ("lambda" | "λ") <identifier>* <instruction>* ")"
+ <identifier> ::= /[a-zA-Z]*/
+  <immediate> ::= /[1-9]\d*/
+```
+
+## Semantic Rules
+- Global scope consistes of all top-level definitions in any order.
+- Local scope consists of all the `define` statements executed within the block of instructions (or within its parent's local scope). at up to the instruction in question.
+- There must be a `main` lambda in global scope with no arguments.
+- An identifier must be in local or global scope before it can be resolved.
