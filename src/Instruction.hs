@@ -1,11 +1,39 @@
-module Instruction (parseInstruction, Instruction (Define, Label, Call), Argument (Referenced, Lambda, Immediate), Identifier) where
+module Instruction
+    ( parseInstruction
+    , Instruction (..)
+    , Argument (..)
+    , Identifier
+    , Parameters
+    ) where
 
 import Data.Char (isDigit)
 import Symbol (Symbol (Atom, Symbols), isAtom)
 
-data Instruction = Define Identifier Argument | Label Identifier | Call Identifier [Argument]
-data Argument = Referenced Identifier | Lambda [Identifier] [Instruction] | Immediate Int
+-- | The fundamental unit of execution in ASMLisp. An instruction corresponds to
+-- an assembly instructions with the ability to specify complex behavior or
+-- arguments.
+data Instruction
+    = Define Identifier Argument  -- ^ Add a local definition.
+    | Label Identifier            -- ^ Add a local label.
+    | Call Identifier [Argument]  -- ^ Call a primitive or user-defined instruction on specified arguments.
+
+-- | The right-hand-side of any instruction in ASMLisp.
+data Argument
+    -- | Either a primitive register, or an identifier defined earlier in the
+    -- source.
+    = Referenced Identifier
+    -- | An anonymous parameterized list of instructions.
+    | Lambda Parameters [Instruction]  
+    -- | An integer corresponding to immediate values used in assembly.
+    | Immediate Int
+
+-- | A symbolic name used to reference a previously-defined 'Identifier', a
+-- complex 'Instruction' (as a 'Lambda'), a 'Label', a register, or an Immediate
 type Identifier = String
+
+-- | A list of 'Identifier's specifically used to represent the parameters of a
+-- 'Lambda' 'Argument'
+type Parameters = [Identifier]
 
 instance Show Instruction where
     show instruction = "(" ++ toString instruction ++ ")" where
@@ -21,11 +49,16 @@ instance Show Argument where
         concatMap show instructions ++ ")"
     show (Immediate int) = show int
 
-parseInstruction :: Symbol -> Instruction
+
+-- Convert a 'Symbol' into the 'Instruction' that it represents.
+parseInstruction
+    :: Symbol       -- ^ The 'Symbol' representing an 'Instruction'
+    -> Instruction  -- ^ The representative 'Instruction'
 parseInstruction (Symbols [Atom "define", id, arg]) =
     Define (parseIdentifier id) (parseArgument arg)
 parseInstruction (Symbols [Atom "label", id]) = Label (parseIdentifier id)
 parseInstruction (Symbols (id:args)) = Call (parseIdentifier id) (map parseArgument args)
+parseInstruction symbol = error $ show symbol
 
 parseArgument :: Symbol -> Argument
 parseArgument (Atom a) =
