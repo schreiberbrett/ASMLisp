@@ -1,3 +1,4 @@
+-- | ASMLisp primitives specific to the RISC-V assembly architecture.
 module RISCV
     ( registers
     , primitiveInstructions
@@ -5,6 +6,8 @@ module RISCV
 
 import Data.Set (Set, fromList)
 
+-- | RISC-V has 32 general purpose registers, including a dedicated zero @x0@, a
+-- stack pointer @sp@, and more.
 registers :: Set String
 registers = fromList $
     allOf 'x' [0..31] ++
@@ -15,7 +18,8 @@ registers = fromList $
       where
         allOf char range = [char : show i | i <- range]
 
-
+-- | RISC-V has a number of primitive instructions as well, including @add@,
+-- @sub@, and @beq@.
 primitiveInstructions :: Set String
 primitiveInstructions = fromList
     [ "lui"

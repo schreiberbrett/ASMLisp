@@ -1,3 +1,4 @@
+-- | A singleton module exporting 'generateCode'
 module CodeGeneration (generateCode) where
 
 

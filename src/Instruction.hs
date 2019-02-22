@@ -1,3 +1,4 @@
+-- | The definition and functionality of the 'Instruction' data type.
 module Instruction
     ( parseInstruction
     , Instruction (..)
@@ -50,7 +51,7 @@ instance Show Argument where
     show (Immediate int) = show int
 
 
--- Convert a 'Symbol' into the 'Instruction' that it represents.
+-- | Convert a 'Symbol' into the 'Instruction' that it represents.
 parseInstruction
     :: Symbol       -- ^ The 'Symbol' representing an 'Instruction'
     -> Instruction  -- ^ The representative 'Instruction'
