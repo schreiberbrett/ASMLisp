@@ -16,8 +16,9 @@ import Symbol (Symbol (Atom, Symbols), isAtom)
 data Instruction
     = Define Identifier Argument  -- ^ Add a local definition.
     | Label Identifier            -- ^ Add a local label.
-    | Call Identifier [Argument]  -- ^ Call a primitive or user-defined instruction on specified arguments.
-
+    | Call Identifier [Argument]  -- ^ Call a user-defined instruction on specified arguments.
+    | Primitive Identifier [Argument] -- ^ Call an assembly-defined instruction on specified arguments.
+    deriving Show
 -- | The right-hand-side of any instruction in ASMLisp.
 data Argument
     -- | Either a primitive register, or an identifier defined earlier in the
@@ -27,7 +28,7 @@ data Argument
     | Lambda Parameters [Instruction]  
     -- | An integer corresponding to immediate values used in assembly.
     | Immediate Int
-
+    deriving Show
 -- | A symbolic name used to reference a previously-defined 'Identifier', a
 -- complex 'Instruction' (as a 'Lambda'), a 'Label', a register, or an Immediate
 type Identifier = String
@@ -36,6 +37,7 @@ type Identifier = String
 -- 'Lambda' 'Argument'
 type Parameters = [Identifier]
 
+{-
 instance Show Instruction where
     show instruction = "(" ++ toString instruction ++ ")" where
         toString (Define id arg) = "define " ++ id ++ " " ++ show arg
@@ -49,7 +51,7 @@ instance Show Argument where
         "(lambda " ++ unwords params ++ "\n\t" ++
         concatMap show instructions ++ ")"
     show (Immediate int) = show int
-
+-}
 
 -- | Convert a 'Symbol' into the 'Instruction' that it represents.
 parseInstruction

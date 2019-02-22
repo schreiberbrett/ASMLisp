@@ -3,8 +3,8 @@ version:             0.1.0.0
 github:              "Bunno/ASMLisp"
 license:             BSD3
 author:              "Brett Schreiber"
-maintainer:          "example@example.com"
-copyright:           "2019 Author name here"
+maintainer:          "schreiberbrett@gmail.com"
+copyright:           "2019 Brett Schreiber"
 
 extra-source-files:
 - README.md

@@ -1,4 +1,4 @@
-module ASMLispParser (parseProgram) where
+module ASMLispParser (mainParser) where
 
 import Control.Monad (void)
 import Control.Monad.Combinators.Expr
@@ -11,19 +11,20 @@ import Instruction (Instruction (..), Argument (..), Identifier, Parameters)
 
 type Parser = Parsec Void String
 
-parseProgram :: String -> [Instruction]
-parseProgram s = case parse program "" s of
-    Left e -> error $ show e
-    Right instructions -> instructions
+
+mainParser :: IO ()
+mainParser = do
+    input <- getContents
+    parseTest program input
 
 program :: Parser [Instruction]
-program = between spaceConsumer eof $ many definition
+program = between spaceConsumer eof $ many instruction
 
 instruction :: Parser Instruction
 instruction = parens (definition <|> label <|> call)
 
 definition :: Parser Instruction
-definition = Define <$> symbol "define" <> identifier <*> argument
+definition = Define <$> symbol "define" <* identifier <*> argument
 
 label :: Parser Instruction
 label = Label <$> symbol "label" <* identifier
@@ -40,16 +41,10 @@ referenced = Referenced <$> identifier
 lambda :: Parser Argument
 -- lambda = Lambda <$> lambdaKeyword <*> parameters <*> many instruction
 lambda = do
-    _ <- lambdaKeyword
+    symbol "lambda" <|> symbol "λ" <|> symbol "\\"
     ps <- parameters
     inst <- many instruction
-    return (Lambda ps inst)
-
-
-lambdaKeyword :: Parser ()
-lambdaKeyword = do
-    _ <- (symbol "lambda") <|> (symbol "λ") 
-    return ()
+    return $ Lambda ps inst
 
 parameters :: Parser Parameters
 parameters = many identifier
@@ -58,7 +53,7 @@ immediate :: Parser Argument
 immediate = Immediate <$> int
 
 identifier :: Parser Identifier
-identifier = (:) <$> letterChar <*> many (alphaNumChar <|> char '-')
+identifier = lexeme $ (:) <$> letterChar <*> many (alphaNumChar <|> char '-')
 
 -- Helper functions
 spaceConsumer :: Parser ()
@@ -75,4 +70,3 @@ parens = between (symbol "(") (symbol ")")
 
 int :: Parser Int
 int = lexeme (fmap fromInteger L.decimal)
-
