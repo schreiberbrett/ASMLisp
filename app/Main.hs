@@ -1,7 +1,7 @@
 module Main where
 
-import ASMLispParser (mainParser)
+import ASMLispParser (parseASMLisp)
 import CodeGeneration (generateCode)
 
 main :: IO ()
-main = mainParser
+main = interact (show . parseASMLisp)

@@ -1,4 +1,4 @@
-module ASMLispParser (mainParser) where
+module ASMLispParser (parseASMLisp) where
 
 import Control.Monad (void)
 import Control.Monad.Combinators.Expr
@@ -11,11 +11,10 @@ import Instruction (Instruction (..), Argument (..), Identifier, Parameters)
 
 type Parser = Parsec Void String
 
-
-mainParser :: IO ()
-mainParser = do
-    input <- getContents
-    parseTest program input
+parseASMLisp :: String -> [Instruction]
+parseASMLisp str = case (parse program "" str) of
+    (Left parseErrorBundle) -> error $ errorBundlePretty parseErrorBundle
+    (Right instructions) -> instructions
 
 program :: Parser [Instruction]
 program = between spaceConsumer eof $ many instruction
