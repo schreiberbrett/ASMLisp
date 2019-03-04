@@ -2,6 +2,7 @@ module ASMLispParser (parseASMLisp) where
 
 import Control.Monad (void)
 import Control.Monad.Combinators.Expr
+import Control.Applicative (liftA2)
 import Data.Void
 import Text.Megaparsec hiding (Label, label)
 import Text.Megaparsec.Char
@@ -23,13 +24,17 @@ instruction :: Parser Instruction
 instruction = parens (definition <|> label <|> call)
 
 definition :: Parser Instruction
-definition = Define <$> symbol "define" <* identifier <*> argument
+definition = do
+    symbol "define"
+    id <- identifier
+    arg <- argument
+    return (Define id arg)
 
 label :: Parser Instruction
 label = Label <$> symbol "label" <* identifier
 
 call :: Parser Instruction
-call = Call <$> identifier <*> many argument
+call = liftA2 Call identifier $ many argument
 
 argument :: Parser Argument
 argument = referenced <|> parens lambda <|> immediate
@@ -38,7 +43,6 @@ referenced :: Parser Argument
 referenced = Referenced <$> identifier
 
 lambda :: Parser Argument
--- lambda = Lambda <$> lambdaKeyword <*> parameters <*> many instruction
 lambda = do
     symbol "lambda" <|> symbol "λ" <|> symbol "\\"
     ps <- parameters

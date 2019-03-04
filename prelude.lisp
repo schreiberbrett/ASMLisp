@@ -1,3 +1,9 @@
+(define main (\
+	(set x1 10)
+	(set x2 20)
+	(iflt x1 x2
+		(\ (add x1 x1 x2)))))
+
 (define b (\ label
 	(jal zero label)))
 
@@ -99,7 +105,7 @@
 (define for-i-in-range-start-stop (\ i start stop do
 	(for-i-in-range-internal i start stop (\
 		(increment i)))))
-		
+
 (define increment (\ r
 	(addi r r 1)))
 	
