@@ -29,6 +29,17 @@ ASMLisp takes this principle a step further by allowing code to be passed as dat
         (increment register)))))
 ```
 
+
+### Non-Local Jumps
+Non-local jumps can be used for exception handling. Consider the use-case of checking if the index is out of bounds before an array access. In this example, `out-of-bounds-handler-label` is defined in the outer scope and passed in to handle an exception:
+```
+(define safe-array-access (\ load-into array length index out-of-bounds-handler-label
+    (jlt length index out-of-bounds-handler-label)
+    (define address load-into)
+    (add address array index)
+    (lw load-into address)))
+```
+
 ## Grammar
 ```
     <program> ::= <definition>*
