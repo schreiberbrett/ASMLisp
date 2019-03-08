@@ -12,8 +12,7 @@ module Instruction
 data Instruction
     = Define Identifier Argument  -- ^ Add a local definition.
     | Label Identifier            -- ^ Add a local label.
-    | Call Identifier [Argument]  -- ^ Call a user-defined instruction on specified arguments.
-    | Primitive Identifier [Argument] -- ^ Call an assembly-defined instruction on specified arguments.
+    | Call Identifier [Argument]  -- ^ Call an instruction on specified arguments.
     deriving Show
 -- | The right-hand-side of any instruction in ASMLisp.
 data Argument

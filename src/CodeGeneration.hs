@@ -20,6 +20,39 @@ type LocalScope = Scope
 type GlobalScope = Scope
 data Context = Context LocalScope GlobalScope (Set String) Labels
 
+{-
+type Code = String
+type Scope' = Map Identifier Definition'
+data Context' = Context' Code LocalScope' GlobalScope' (Set String) Labels
+
+
+data Definition' = Primitive String | Function Parameters [Instruction] Scope
+data ResolvedArgument = Predefined Definition | ForwardReferencedLabel String
+
+generateInstructions' :: [Instruction] -> Context' -> Context'
+generateInstructions' [] context = context
+
+generateInstructions' (Define identifier argument):rest (Context' code locals globals visited labelNum) =
+    generateInstructions rest $ case resolve argument of
+        Predefined definition -> Context' code (insert identifier definition locals) globals visited labelNum
+        ForwardReferencedLabel str -> Context' code (Map.insert identifier (LabelDefinition str) locals) globals visited (labelNum + 1)
+
+generateInstructions' (Label identifier):rest (Context' code locals globals visited labelNum) =
+    generateInstructions rest $ case resolve (Referenced identifier) of
+        Predefined (Primitive label) -> Context' (code ++ label ++ ":\n") locals globals visited labelNum
+        Predefined (Function _) -> error $ "Expected a label, but got function `" ++ identifier ++ "`"
+        ForwardReferencedLabel str -> Context' (code ++ str ++ ":\n") (Map.insert identifier (labelDefinition str) locals) globals visited (labelNum + 1)
+
+generateInstructions' (Call identifier arguments):rest (Context' code locals globals visited labelNum) =
+    | identifier `member` visited = error $ "Circular call to " ++ identifier
+    | identifier `member` primitiveInstructions = generateInstructions' rest 
+        Context'
+            (code ++"\t" ++ identifier ++ " " ++ intercalate ", " map toString resolvedArguments)
+            resolvedLocals globals visited resolvedLabelNum
+    | otherwise = generateInstructions' rest newContext
+      where
+        (Context functionCode _ _ _ newLabelNum2) = generateInstructions function parameterArguments
+-}
 -- | Push a definition to the local scope of a context
 addLocal
     :: (Identifier, Definition)  -- ^ Identifier and corresponding definition
