@@ -88,7 +88,7 @@ resolvePrimitiveArg (Referenced identifier) context@(Context locals globals visi
             LabelDefinition str -> str
             Function _ _ _ -> error "Passed function `" ++ identifier ++ "`, but expected a register, immediate, or label."
 
-        newLabel = trace ("I need a new label: L" ++ show labelNum) ('L' : show labelNum)
+        newLabel = 'L' : show labelNum
         newContext = Context newLocals globals visited newLabelNum
         newLocals = (identifier, LabelDefinition newLabel):locals
         newLabelNum = labelNum + 1
